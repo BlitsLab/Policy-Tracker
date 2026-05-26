@@ -1,0 +1,38 @@
+$processName = "PolicyAgent" 
+while($true) {
+    Clear-Host
+    $proc = Get-Process -Name $processName -ErrorAction SilentlyContinue
+    
+ if ($PrivateMB -ge 23) {
+   	 Write-Host "The system is running." -ForegroundColor Red
+		
+	}
+		elseif ($PrivateMB -le 22) {
+    			Write-Host "not on." -ForegroundColor Green
+			$Confidence = [Math]::Min((0-(($PrivateMB - 22) / 8) * 100), 100)
+				if ($Confidence -le 5)  {
+					$Confidence = $Confidence + 10
+							}
+	}
+   
+if ($proc) {
+        # Calculate Private Memory (Matches Task Manager default)
+        $privateBytes = ($proc.PrivateMemorySize64 | Measure-Object -Sum).Sum
+        $privateMB = [math]::Round($privateBytes / 1MB, 2)
+	
+        # Calculate Working Set (Total Physical RAM used)
+        $workingBytes = ($proc.WorkingSet | Measure-Object -Sum).Sum
+        $workingMB = [math]::Round($workingBytes / 1MB, 2)
+	Write-Host "Confidence: $Confidence%" -ForegroundColor yellow
+        Write-Host "----------------------------------"
+        Write-Host "Private: $privateMB MB" -ForegroundColor White
+        Write-Host "Total Physical (WS): $workingMB MB" -ForegroundColor White
+        Write-Host "----------------------------------"
+        Write-Host "Press Ctrl+C to stop" -ForegroundColor DarkGray
+    } else {
+        Write-Host "Searching for $processName..." -ForegroundColor Red
+    }
+    
+    Start-Sleep -Seconds 1
+}
+#Created by blits
