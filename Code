@@ -5,35 +5,30 @@ while($true) {
     $proc = Get-Process -Name $processName -ErrorAction SilentlyContinue
     
     if ($proc) {
-        # 1. CALCULATE MEMORY FIRST 
         $privateBytes = ($proc.PrivateMemorySize64 | Measure-Object -Sum).Sum
         $privateMB = [math]::Round($privateBytes / 1MB, 2)
         
         # Calculate Working Set (Total Physical RAM used)
         $workingBytes = ($proc.WorkingSet | Measure-Object -Sum).Sum
         $workingMB = [math]::Round($workingBytes / 1MB, 2)
-
-        # Initialize Confidence variable
         $Confidence = 0
 
-        # 2. RUN LOGIC CHECKS AFTER UTILITY DEFINITION
         if ($privateMB -ge 18) {
             Write-Host "The system is running." -ForegroundColor Red
-            $Confidence = [Math]::Min((0 + (($privateMB - 18) / 8) * 100), 100)
+            $Confidence = [Math]::Min((0 - (($privateMB - 18) / 8) * 100), 100)
             if ($Confidence -le 5) {
                 $Confidence = $Confidence + 10
             }
         }
         
         if ($privateMB -le 17) {
-            Write-Host "The system is running." -ForegroundColor Red
-            $Confidence = [Math]::Min((0 + (($privateMB - 22) / 8) * 100), 100)
+            Write-Host "The system is not running." -ForegroundColor Green
+            $Confidence = [Math]::Min((0 - (($privateMB - 18) / 8) * 100), 100)
             if ($Confidence -le 5) {
                 $Confidence = $Confidence + 10
             }
         }
         
-        # 3. DISPLAY OUTPUT
         Write-Host "Confidence: $Confidence%" -ForegroundColor Yellow
         Write-Host "----------------------------------"
         Write-Host "Private: $privateMB MB" -ForegroundColor White
