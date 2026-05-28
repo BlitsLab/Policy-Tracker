@@ -3,22 +3,28 @@ while($true) {
     Clear-Host
     $proc = Get-Process -Name $processName -ErrorAction SilentlyContinue
     
- if ($PrivateMB -ge 23) {
+ if ($PrivateMB -ge 18) {
    	 Write-Host "The system is running." -ForegroundColor Red
+			$Confidence = [Math]::Min((0+(($PrivateMB - 18) / 8) * 100), 100)
+				if ($Confidence -le 5) 
+					$Confidence = $Confidence + 10
+			}
+
 		
 	}
-		elseif ($PrivateMB -le 22) {
-    			Write-Host "not on." -ForegroundColor Green
-			$Confidence = [Math]::Min((0-(($PrivateMB - 22) / 8) * 100), 100)
-				if ($Confidence -le 5)  {
-					$Confidence = $Confidence + 10
-							}
+		 if ($PrivateMB -le 17) {
+        Write-Host "The system is running." -ForegroundColor Red
+        $Confidence = [Math]::Min((0+(($PrivateMB - 22) / 8) * 100), 100)
+        if ($Confidence -le 5) 
+            $Confidence = $Confidence + 10
+			
 	}
    
 if ($proc) {
         # Calculate Private Memory (Matches Task Manager default)
         $privateBytes = ($proc.PrivateMemorySize64 | Measure-Object -Sum).Sum
         $privateMB = [math]::Round($privateBytes / 1MB, 2)
+	$testMB = 30
 	
         # Calculate Working Set (Total Physical RAM used)
         $workingBytes = ($proc.WorkingSet | Measure-Object -Sum).Sum
@@ -35,4 +41,5 @@ if ($proc) {
     
     Start-Sleep -Seconds 1
 }
+
 #Created by blits
