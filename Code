@@ -13,17 +13,17 @@ while($true) {
         $workingMB = [math]::Round($workingBytes / 1MB, 2)
         $Confidence = 0
 
-        if ($WorkingMB -ge 24) {
+        if ($workingMB -ge 24) {
             Write-Host "The system is running." -ForegroundColor Red
-            $Confidence = [Math]::Min((0 + (($WorkingMB - 24) / 8) * 100), 100)
+            $Confidence = [Math]::Min((0 + (($workingMB - 24) / 8) * 100), 100)
             if ($Confidence -le 5) {
                 $Confidence = $Confidence + 10
             }
         }
         
-        if ($privateMB -le 23) {
+        if ($workingMB -le 23) {
             Write-Host "The system is not running." -ForegroundColor Green
-            $Confidence = [Math]::Min((0 - (($WorkingMB - 24) / 8) * 100), 100)
+            $Confidence = [Math]::Min((0 - (($workingMB - 24) / 8) * 100), 100)
             if ($Confidence -le 5) {
                 $Confidence = $Confidence + 10
             }
