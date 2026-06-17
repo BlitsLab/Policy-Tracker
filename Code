@@ -12,22 +12,21 @@ while($true) {
         $workingBytes = ($proc.WorkingSet | Measure-Object -Sum).Sum
         $workingMB = [math]::Round($workingBytes / 1MB, 2)
         $Confidence = 0
+	$TestMB = 25
 
         if ($workingMB -ge 24) {
             Write-Host "The system is running." -ForegroundColor Red
-            $Confidence = [Math]::Min((0 + (($workingMB - 24) / 8) * 100), 100)
-            if ($Confidence -le 5) {
-                $Confidence = $Confidence + 10
-            }
+          		 $BoundedMB = [Math]::Max(20, [Math]::Min(40, $WorkingMB))
+		$Confidence = ($BoundedMB - 20) * 5           
         }
         
-        if ($workingMB -le 23) {
+        if ($workingMB -le 24) {
             Write-Host "The system is not running." -ForegroundColor Green
-            $Confidence = [Math]::Min((0 - (($workingMB - 24) / 8) * 100), 100)
-            if ($Confidence -le 5) {
-                $Confidence = $Confidence + 10
-            }
-        }
+			$BoundedMB = [Math]::Max(20, [Math]::Min(40, $WorkingMB))
+
+		# Calculate Confidence percentage (100% at 20MB, 0% at 40MB)
+		$Confidence = (40 - $BoundedMB) * 5
+                    }
         
         Write-Host "Confidence: $Confidence%" -ForegroundColor Yellow
         Write-Host "----------------------------------"
