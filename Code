@@ -14,7 +14,7 @@ while($true) {
         $Confidence = 0
 	$TestMB = 25
 
-        if ($workingMB -ge 24) {
+        if ($workingMB -ge 28 -or $privateMB -ge 18) {
             Write-Host "The system is running." -ForegroundColor Red
           		 $BoundedMB = [Math]::Max(20, [Math]::Min(40, $WorkingMB))
 		$Confidence = ($BoundedMB - 20) * 5           
